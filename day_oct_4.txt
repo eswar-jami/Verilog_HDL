@@ -1,0 +1,155 @@
+add_sub_using_always_block
+
+
+module adder_sub(  
+               input a_in,
+               input b_in,
+               input opcode,
+               output reg sum_out,
+               output reg flag_out
+
+    );
+    
+    always@(*)
+    begin
+     if(opcode==0)
+         begin
+          {flag_out,sum_out}=a_in+b_in;
+          
+          end
+          
+          else
+          begin
+          
+          {flag_out,sum_out}=a_in-b_in;
+          
+          end
+          
+       end    
+endmodule
+
+
+TESTBEANCH
+
+module tb_adder_sub();
+   reg a_in;
+   reg b_in;
+   reg opcode;
+   wire sum_out;
+   wire flag_out;
+   adder_sub DUT
+   (  
+               .a_in(a_in),
+               .b_in(b_in),
+               .opcode(opcode),
+               .sum_out(sum_out),
+               .flag_out(flag_out)
+         );
+always #100  opcode=~opcode;
+always #10 a_in=~a_in;
+always #20 b_in=~b_in;
+
+initial
+begin
+ 
+
+  a_in=1'b0;b_in=1'b0;opcode=1'b1;
+  
+  #500 $finish;
+end
+endmodule
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+4bit operation of differnet functions by usiung case
+
+
+module using_case_2to1_mux(
+                     input a_in,
+                     input b_in,
+                     input scl_in,
+                     output reg y_out
+    );
+    always @(*)
+    begin
+         case(scl_in)
+          1'b0:y_out=a_in;
+         default 
+         y_out=b_in;
+         endcase
+    end
+endmodule
+
+--------------------------------------------
+test bench code
+
+module tb_operations_4_bit();
+   reg [3:0]a_in;
+   reg [3:0]b_in;
+   reg [1:0]operate;
+   wire [3:0]y_out;
+   
+   operations_4_bit DUT(
+           .a_in(a_in),
+           .b_in(b_in),
+           .operate(operate),
+           .y_out(y_out)
+    );
+    
+    
+    always #100 operate=operate+1;
+    always #10  a_in=a_in+1;
+    always #20  b_in=b_in+1;
+    
+    initial
+    begin
+       a_in=4'b0000;b_in=4'b0000;operate=2'b00;
+    #500   $finish;
+    end
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+decoder 2to4 using case
+
+module using_case_decoder_2to4(
+                                 input [1:0]sel_in,
+                                 input enable_in,
+                                 output reg [3:0]y_out
+    );
+ always@(*)
+    begin
+        //if(enable_in)
+       // begin
+           case({enable_in,sel_in})
+                 3'b100:y_out=4'b0001;
+                 3'b101:y_out=4'b0010;
+                 3'b110:y_out=4'b0100;
+                 3'b111:y_out=4'b1000;
+                 default:y_out=4'b0000;
+           endcase
+       //   end  
+   // else
+      //y_out=4'b0000;
+     end
+endmodule
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+decoder 2to1 mux using case
+
+module using_case_2to1_mux(
+                     input a_in,
+                     input b_in,
+                     input scl_in,
+                     output reg y_out
+    );
+    always @(*)
+    begin
+         case(scl_in)
+          1'b0:y_out=a_in;
+         default 
+         y_out=b_in;
+         endcase
+    end
+endmodule
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
